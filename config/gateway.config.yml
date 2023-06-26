@@ -1,0 +1,80 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+    host: localhost
+    paths: '/ip'
+  users:
+    host: localhost
+    paths: ["/api1"]
+  events:
+    host: localhost
+    paths: ["/api2"]
+  providers:
+    host: localhost
+    paths: ["/api3"]
+serviceEndpoints:
+  httpbin:
+    url: 'https://httpbin.org'
+  usersServices:
+    url: 'http://localhost:3001'    #aqui ip del servicio
+  eventsServices:
+    url: 'http://localhost:3000'
+  providersServices:
+    url: 'http://localhost:3000'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httpbin 
+              changeOrigin: true
+
+  usersPipeline:
+    apiEndpoints:
+      - users
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: usersServices 
+              changeOrigin: true
+
+  eventsPipeline:
+    apiEndpoints:
+      - events
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: eventsServices 
+              changeOrigin: true
+
+  providersPipeline:
+    apiEndpoints:
+      - providers
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: providersServices 
+              changeOrigin: true
