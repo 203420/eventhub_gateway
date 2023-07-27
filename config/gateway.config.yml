@@ -4,27 +4,32 @@ admin:
   port: 9876
   host: localhost
 apiEndpoints:
-  api:
+  auth:
     host: localhost
-    paths: '/ip'
-  users:
-    host: localhost
-    paths: ["/api1"]
-  events:
-    host: localhost
-    paths: ["/api2"]
+    paths: ['/auth/*']
   providers:
     host: localhost
-    paths: ["/api3"]
+    paths: ['/providers', '/providers/*', '/images-providers/*']
+  events:
+    host: localhost
+    paths: ['/events', '/events/*', '/images-events/*']
+  services:
+    host: localhost
+    paths: ['/services', '/services/*', '/images-services/*']
+  notifications:
+    host: localhost
+    pats: ['/notifications', '/notifications/*']
 serviceEndpoints:
-  httpbin:
-    url: 'https://httpbin.org'
-  usersServices:
-    url: 'http://localhost:3001'    #aqui ip del servicio
-  eventsServices:
-    url: 'http://localhost:3000'
+  authServices:
+    url: 'http://44.212.67.137'
   providersServices:
-    url: 'http://localhost:3000'
+    url: 'http://3.86.233.169'
+  eventsServices:
+    url: 'http://3.82.252.105'
+  servicesServices:
+    url: 'http://44.211.46.169'
+  notificationsServices:
+    url: 'http://54.234.229.240'
 policies:
   - basic-auth
   - cors
@@ -35,39 +40,16 @@ policies:
   - proxy
   - rate-limit
 pipelines:
-  default:
+  authPipeline:
     apiEndpoints:
-      - api
+      - auth
     policies:
     # Uncomment `key-auth:` when instructed to in the Getting Started guide.
     # - key-auth:
       - proxy:
           - action:
-              serviceEndpoint: httpbin 
+              serviceEndpoint: authServices
               changeOrigin: true
-
-  usersPipeline:
-    apiEndpoints:
-      - users
-    policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
-      - proxy:
-          - action:
-              serviceEndpoint: usersServices 
-              changeOrigin: true
-
-  eventsPipeline:
-    apiEndpoints:
-      - events
-    policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
-      - proxy:
-          - action:
-              serviceEndpoint: eventsServices 
-              changeOrigin: true
-
   providersPipeline:
     apiEndpoints:
       - providers
@@ -76,5 +58,31 @@ pipelines:
     # - key-auth:
       - proxy:
           - action:
-              serviceEndpoint: providersServices 
+              serviceEndpoint: providersServices
+              changeOrigin: true
+  eventsPipeline:
+    apiEndpoints:
+      - events
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: eventsServices
+              changeOrigin: true
+  servicesPipeline:
+    apiEndpoints:
+      - services
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: servicesServices
+              changeOrigin: true
+  notificationsPipeline:
+    apiEndpoints:
+      - notifications
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: notificationsServices
               changeOrigin: true
